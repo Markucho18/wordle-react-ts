@@ -14,12 +14,16 @@ const App: React.FC = () =>{
 
   const [word, setWord] = useState(getWord(wordLength))
 
-  const [currentWord, setCurrentWord] = useState([])
+  const [previousWords, setPreviousWords] = useState<string[][]>([])
+
+  const [currentWord, setCurrentWord] = useState<string[]>([])
 
   const restartGame = () => {
     setGameStatus("notPlaying")
     setWord(getWord(wordLength))
   }
+
+  console.log(word)
 
   const toggleTheme = () => {
     let htmlElement = document.documentElement
@@ -27,17 +31,22 @@ const App: React.FC = () =>{
   }
 
   return (
-    <div className="w-full h-screen flex flex-col dark:bg-zinc-600">
+    <div className="w-full h-screen flex flex-col items-center gap-12 dark:bg-zinc-600 select-none">
       <Header
         wordLength={wordLength}
         handleLength={setWordLength}
         toggleTheme={toggleTheme}
       />
       <Board
+        previousWords={previousWords}
+        currentWord={currentWord}
         word={word}
-        wordLength={wordLength}
       />
-      <Keyboard />
+      <Keyboard
+        wordLength={wordLength}
+        setCurrentWord={setCurrentWord}
+        setPreviousWords={setPreviousWords}
+      />
     </div>
   )
 }

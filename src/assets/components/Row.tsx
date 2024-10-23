@@ -1,18 +1,24 @@
+//import { useEffect } from "react"
+import Cell from "./Cell"
+
 interface RowProps{
+  word: string
   letters: string[]
 }
 
-const Row:React.FC<RowProps> = ({ letters }) => {
+const Row:React.FC<RowProps> = ({ word, letters }) => {
+
   return (
-    <ul className="flex">
+    <ul className="flex gap-2">
       {letters.map((letter, i)=>(
-        <li
-          key={i}
-          className="p-2"
-        >
-          {letter}
-        </li>
-      ))}
+          <Cell
+            key={i}
+            word={word}
+            index={i}
+            letter={letter.toUpperCase()}
+          />
+          ))
+      }
     </ul>
   )
 }

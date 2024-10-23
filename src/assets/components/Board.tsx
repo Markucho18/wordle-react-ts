@@ -1,29 +1,35 @@
+import Row from "./Row"
+import CurrentRow from "./CurrentRow"
+
 interface BoardProps{
+  previousWords: string[][]
+  currentWord: string[]
   word: string
-  wordLength: number
 }
 
-const Board: React.FC<BoardProps> = ({ word, wordLength }) => {
+const Board: React.FC<BoardProps> = ({ previousWords, currentWord, word}) => {
 
-
+  const emptyArray: string[] = []
+  for(let i = 0; i < word.length; i++) emptyArray.push("")
 
   return (
-    <div className="dark:text-white">
-      {Array.from({length: 6}).map((_, i)=>(
-        <div
-          key={i}
-          className="flex"
-        >
-          {Array.from({length: wordLength}).map((_, i)=>(
-            <div
-              key={i}
-              className="flex"
-            >
-              {word[i]}
-            </div>
-          ))}
-        </div>
-      ))}
+    <div className="flex flex-col gap-2 text-white gap">
+      {Array.from({length: 6}).map((_, i)=>{
+        if(i == previousWords.length) return (
+          <CurrentRow
+            key={i}
+            word={word}
+            currentWord={currentWord}
+          />
+        )
+        return (
+          <Row
+            key={i}
+            word={word}
+            letters={previousWords[i] ? previousWords[i] : emptyArray}
+          />
+        )
+      })}
     </div>
   )
 }

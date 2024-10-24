@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react"
 import { CiDark } from "react-icons/ci";
 import { CiSettings } from "react-icons/ci";
+import { useWordsContext } from "../contexts/WordsContext";
 
 interface HeaderProps {
-  wordLength: number
-  handleLength: React.Dispatch<React.SetStateAction<number>>
   toggleTheme: () => void
 }
 
-const Header: React.FC<HeaderProps> = ({ wordLength, handleLength, toggleTheme}) => {
+const Header: React.FC<HeaderProps> = ({ toggleTheme }) => {
+
+  const {wordLength, setWordLength} = useWordsContext()
 
   const [newLength, setNewLength] = useState(wordLength)
 
@@ -17,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ wordLength, handleLength, toggleTheme})
 
   useEffect(()=>{
     if(wordLength !== newLength){
-      handleLength(newLength)
+      setWordLength(newLength)
     }
     console.log("newLength ha cambiado")
   },[newLength])

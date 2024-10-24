@@ -1,22 +1,20 @@
+import { useWordsContext } from "../contexts/WordsContext"
 import Cell from "./Cell"
 
-type GameStatus = "playing" | "won" | "lost"
-
 interface GameResultModalProps{
-  result: GameStatus
-  word: string
-  previousWords: string[][]
   closeModal: () => void
 }
 
-const GameResultModal: React.FC<GameResultModalProps> = ({ result, word, previousWords, closeModal }) => {
+const GameResultModal: React.FC<GameResultModalProps> = ({ closeModal }) => {
+
+  const {gameStatus, word, previousWords} = useWordsContext()
 
   const resultMessages = {
     "won": "Congratulations! you've won",
     "lost": "You've lost, better luck next time!",
     "playing": ""
   }
-  const resultMessage = resultMessages[result]
+  const resultMessage = resultMessages[gameStatus]
 
   return (
     <div className="absolute inset-0 size-full flex justify-center items-center bg-black/20">
@@ -29,7 +27,7 @@ const GameResultModal: React.FC<GameResultModalProps> = ({ result, word, previou
             className="size-8"
           />
         </button> */}
-        <h2 className={`text-3xl font-bold ${result == "won" ? "text-green-400" : "text-red-500"}`}>
+        <h2 className={`text-3xl font-bold ${gameStatus == "won" ? "text-green-400" : "text-red-500"}`}>
           {resultMessage.toUpperCase()}
         </h2>
         <div className="flex flex-col gap-2 text-white">

@@ -3,22 +3,19 @@ import Header from "./assets/components/Header"
 import Board from "./assets/components/Board"
 import Keyboard from "./assets/components/Keyboard"
 import WarningModal from "./assets/components/WarningModal"
-import GameResultModal from "./assets/components/gameResultModal"
+import GameResultModal from "./assets/components/GameResultModal"
 import { getWord } from "./assets/utils/getWord"
-
-type GameStatus = "playing" | "won" | "lost"
+import { useWordsContext } from "./assets/contexts/WordsContext"
 
 const App: React.FC = () =>{
 
-  const [gameStatus, setGameStatus] = useState<GameStatus>("playing")
-  
-  const [wordLength, setWordLength] = useState(5)
-
-  const [word, setWord] = useState(getWord(wordLength))
-
-  const [previousWords, setPreviousWords] = useState<string[][]>([])
-
-  const [currentWord, setCurrentWord] = useState<string[]>([])
+  const {
+    gameStatus, setGameStatus,
+    wordLength,
+    word, setWord,
+    setPreviousWords,
+    setCurrentWord
+  } = useWordsContext()
 
   const [warningModal, setWarningModal] = useState(0)
   const handleWarningModal = (n: number) => setWarningModal(n)
@@ -47,7 +44,7 @@ const App: React.FC = () =>{
     if(warningModal !== 0){
       const autoCloseDelay = setTimeout(()=>{
         setWarningModal(0)
-      }, 2000)
+      }, 1500)
       return () => {
         clearTimeout(autoCloseDelay)
       }
@@ -64,21 +61,10 @@ const App: React.FC = () =>{
   return (
     <div className="relative w-full h-screen flex flex-col items-center gap-12 dark:bg-zinc-600 select-none">
       <Header
-        wordLength={wordLength}
-        handleLength={setWordLength}
         toggleTheme={toggleTheme}
       />
-      <Board
-        previousWords={previousWords}
-        currentWord={currentWord}
-        word={word}
-      />
+      <Board/>
       <Keyboard
-        word={word}
-        handleGameStatus={setGameStatus}
-        wordLength={wordLength}
-        setCurrentWord={setCurrentWord}
-        setPreviousWords={setPreviousWords}
         handleModal={handleWarningModal}
       />
       {warningModal !== 0 && (
@@ -88,9 +74,6 @@ const App: React.FC = () =>{
       )}
       {gameResultModal && (
         <GameResultModal
-          result={gameStatus}
-          word={word}
-          previousWords={previousWords}
           closeModal={closeGameResultModal}
         />
       )}

@@ -1,76 +1,145 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FiDelete } from "react-icons/fi";
 import { validateWord } from "../utils/validateWord";
-
-type GameStatus = "playing" | "won" | "lost"
+import { useWordsContext } from "../contexts/WordsContext";
 
 interface KeyboardProps{
-  word: string
-  handleGameStatus: React.Dispatch<React.SetStateAction<GameStatus>>
-  wordLength: number
-  setCurrentWord: React.Dispatch<React.SetStateAction<string[]>>
-  setPreviousWords: React.Dispatch<React.SetStateAction<string[][]>>
-  handleModal: (n:number) => void
+  handleModal: (n: number) => void
 }
 
 const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-const Keyboard: React.FC<KeyboardProps> = ({ word, handleGameStatus, wordLength, setCurrentWord, setPreviousWords, handleModal }) => {
+const Keyboard: React.FC<KeyboardProps> = ({ handleModal }) => {
 
-  const checkGameResult = (curr: string[], prevWords: string[][]) => {
-    const currWord = curr.join("").toLowerCase()
-    console.log("Se ejecutó checkGameResult(), ", currWord, word, prevWords)
+  const {
+    setGameStatus, wordLength,
+    word, setWord,
+    previousWords, setPreviousWords,
+    currentWord, setCurrentWord
+  } = useWordsContext()
+
+  const checkGameResult = () => {
+    const currWord = currentWord.join("").toLowerCase()
+    console.log("Se ejecutó checkGameResult(), ", currentWord, word, previousWords)
     if(currWord == word){
       console.log("La palabra es correcta")
-      handleGameStatus("won")
+      setGameStatus("won")
     }
-    else if(prevWords.length == 6){
-      handleGameStatus("lost")
+    else if(previousWords.length == 6){
+      setGameStatus("lost")
     }
+    setCurrentWord([])
   }
 
+  const [wordIsValid, setWordIsValid] = useState(false)
+
+  useEffect(()=>{
+    if(wordIsValid) checkGameResult()
+  }, [wordIsValid])
+
+/*   const handleLetter = (letter: string) => {
+    console.log("currentWord en handleLetter: ", currentWord)
+    setCurrentWord(prev => [...prev, letter])
+  }
+  
+  const handleBackspace = () => {
+    
+    console.log("currentWord en handleBackspace: ", currentWord)
+    setCurrentWord(prev => prev.slice(0, -1))
+  }
+
+  const handleEnter = () => {
+    console.log("En handleEnter: ", currentWord, word)
+    if(currentWord.length == word.length){
+      validateWord(currentWord)
+      .then(res =>{
+        if(res.length > 0){
+          setPreviousWords(prev => [...prev, currentWord])
+          setWordIsValid(true)
+        }
+        else{
+          setWordIsValid(false)
+          handleModal(2)
+        }
+      })
+      .catch(err => console.log("Hubo un error: ", err))
+    }
+    else{
+      handleModal(1)
+    }
+  } */
+
   const handleKeyDown = (key:string) => {
+    const upperKey = key.toUpperCase()
     setCurrentWord(prevCurrentWord => {
-      const upperKey = key.toUpperCase()
-      const newCurrentWord = [...prevCurrentWord]
       if(alphabet.includes(upperKey) && prevCurrentWord.length < wordLength){
-        newCurrentWord.push(upperKey)
+        return [...prevCurrentWord, key.toUpperCase()]
+      }
+      else if(key == "Backspace"){
+        return prevCurrentWord.slice(0, -1)
       }
       else if(key == "Enter"){
-        if(prevCurrentWord.length == wordLength){
+        if(prevCurrentWord.length == word.length){
           validateWord(prevCurrentWord)
-          .then(res => {
+          .then(res =>{
             if(res.length > 0){
-              setPreviousWords(prevPreviousWords =>{
-                const newPreviousWords = [...prevPreviousWords, prevCurrentWord]
-                checkGameResult(prevCurrentWord, newPreviousWords)
-                return newPreviousWords
+              setPreviousWords(prev => [...prev, currentWord])
+              console.log("Se ejecutó checkGameResult(), ", prevCurrentWord, word)
+              setWord(prevWord =>{
+                const currWord = prevCurrentWord.join("").toLowerCase()
+                if(currWord === prevWord){
+                  console.log("La palabra es correcta")
+                  setGameStatus("won")
+                }
+                else if(previousWords.length === 6){
+                  setGameStatus("lost")
+                }
+                return prevWord
               })
-              setCurrentWord([])
+              return []
             }
             else{
               handleModal(2)
             }
           })
-          .catch(err => console.log(err))
+          .catch(err => console.log("Hubo un error: ", err))
         }
         else{
           handleModal(1)
         }
       }
-      else if(key == "Backspace"){
-        newCurrentWord.pop()
-      }
-      return newCurrentWord
+      return prevCurrentWord
     })
   }
 
+ /*  const handleKeyDown = (key: string) => {
+    const upperKey = key.toUpperCase()
+    if(alphabet.includes(upperKey) && currentWord.length < wordLength){
+      handleLetter(upperKey)
+    }
+    else if(key == "Backspace"){
+      handleBackspace()
+    }
+    else if(key == "Enter"){
+      handleEnter()
+    }
+  } */
+  
   useEffect(()=>{
     document.addEventListener("keydown", (e) => handleKeyDown(e.key));
     return () => {
       document.removeEventListener("keydown", (e) => handleKeyDown(e.key) )
     }
   },[])
+
+
+  useEffect(()=>{
+    console.log("Word se actualizo en Keyboard.tsx: ", word)
+  },[word])
+
+  useEffect(()=>{
+    console.log("currentWord: ", currentWord)
+  },[currentWord])
 
   return (
     <div className="flex flex-col gap-2 dark:text-white ">
@@ -124,3 +193,46 @@ const Keyboard: React.FC<KeyboardProps> = ({ word, handleGameStatus, wordLength,
 }
 
 export default Keyboard
+
+    /* const handleKeyDown = (key:string) => {
+      setCurrentWord(prevCurrentWord => {
+        const upperKey = key.toUpperCase()
+        const newCurrentWord = [...prevCurrentWord]
+        if(alphabet.includes(upperKey) && prevCurrentWord.length < wordLength){
+          newCurrentWord.push(upperKey)
+        }
+        else if(key == "Enter"){
+          if(prevCurrentWord.length == wordLength){
+            validateWord(prevCurrentWord)
+            .then(res => {
+              if(res.length > 0){
+                setPreviousWords(prevPreviousWords =>{
+                  const newPreviousWords = [...prevPreviousWords, prevCurrentWord]
+                  checkGameResult(prevCurrentWord, newPreviousWords)
+                  return newPreviousWords
+                })
+                setCurrentWord([])
+              }
+              else{
+                handleModal(2)
+              }
+            })
+            .catch(err => console.log(err))
+          }
+          else{
+            handleModal(1)
+          }
+        }
+        else if(key == "Backspace"){
+          newCurrentWord.pop()
+        }
+        return newCurrentWord
+      })
+    } */
+  
+    /*   useEffect(()=>{
+        document.addEventListener("keydown", (e) => handleKeyDown(e.key));
+        return () => {
+          document.removeEventListener("keydown", (e) => handleKeyDown(e.key) )
+        }
+      },[]) */

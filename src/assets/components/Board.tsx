@@ -1,13 +1,13 @@
 import Row from "./Row"
 import CurrentRow from "./CurrentRow"
+import { useWordsContext } from "../contexts/WordsContext"
 
 interface BoardProps{
-  previousWords: string[][]
-  currentWord: string[]
-  word: string
 }
 
-const Board: React.FC<BoardProps> = ({ previousWords, currentWord, word}) => {
+const Board: React.FC<BoardProps> = () => {
+
+  const {previousWords, currentWord, word} = useWordsContext()
 
   const emptyArray: string[] = []
   for(let i = 0; i < word.length; i++) emptyArray.push("")

@@ -11,18 +11,19 @@ interface CellProps{
 
 const Cell:React.FC<CellProps> = ({word, letter, index, size = 16, check = true}) => {
 
-  const colors = [
-    "#3d4054",
-    "#f3c237",
-    "#79b851",
-  ]
+  const letterState = check ? checkLetter(word, letter, index) : 0
 
-  const letterState = checkLetter(word, letter, index)
+  const colors = [
+    "bg-[#a4aec4] dark:bg-[#191a24]",
+    "bg-[#f3c237]",
+    "bg-[#79b851]"
+  ]
+  const colorStyles = colors[letterState]
 
   return (
     <li
-      style={{backgroundColor: check ? colors[letterState] : colors[0]}}
-      className={"flex justify-center items-center text-3xl font-bold rounded-lg" + ` size-${size}`}
+      /* style={{backgroundColor: colors[0]}} */
+      className={`flex justify-center items-center text-3xl font-bold rounded-lg size-${size} ${colorStyles}`}
     >
       {letter.toUpperCase()}
     </li>

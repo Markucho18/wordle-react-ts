@@ -3,14 +3,14 @@ import Cell from "./Cell"
 
 interface RowProps{
   word: string
-  letters: string[]
+  currentWord: string
 }
 
-const Row:React.FC<RowProps> = ({ word, letters }) => {
+const Row:React.FC<RowProps> = ({ word, currentWord }) => {
 
   return (
     <ul className="flex gap-2">
-      {letters.map((letter, i)=>(
+      {currentWord.split("").map((letter, i)=>(
           <Cell
             key={i}
             word={word}

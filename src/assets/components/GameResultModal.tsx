@@ -1,20 +1,16 @@
-import { useWordsContext } from "../contexts/WordsContext"
+import { GameStatus } from "../../types"
 import Cell from "./Cell"
 
 interface GameResultModalProps{
+  gameStatus: GameStatus
+  word: string
+  completedWords: string[]
   closeModal: () => void
 }
 
-const GameResultModal: React.FC<GameResultModalProps> = ({ closeModal }) => {
+const GameResultModal: React.FC<GameResultModalProps> = ({ gameStatus, word, completedWords, closeModal}) => {
 
-  const {gameStatus, word, previousWords} = useWordsContext()
-
-  const resultMessages = {
-    "won": "Congratulations! you've won",
-    "lost": "You've lost, better luck next time!",
-    "playing": ""
-  }
-  const resultMessage = resultMessages[gameStatus]
+/*   const {gameStatus, word, previousWords} = useWordsContext() */
 
   return (
     <div className="absolute inset-0 size-full flex justify-center items-center bg-black/20">
@@ -28,16 +24,19 @@ const GameResultModal: React.FC<GameResultModalProps> = ({ closeModal }) => {
           />
         </button> */}
         <h2 className={`text-3xl font-bold ${gameStatus == "won" ? "text-green-400" : "text-red-500"}`}>
-          {resultMessage.toUpperCase()}
+          {gameStatus == "won"
+            ? "Congratulations! you've won"
+            : "You've lost, better luck next time!"
+          }
         </h2>
         <div className="flex flex-col gap-2 text-white">
-          {previousWords.map((prevRow, i)=>{
+          {completedWords.map((prevRow, i)=>{
             return (
               <div
                 key={i}
                 className="flex gap-2"
               >
-                {prevRow.map((prevLetter, j)=>{
+                {prevRow.split("").map((prevLetter, j)=>{
                   return (
                     <Cell
                     key={j}
@@ -57,7 +56,7 @@ const GameResultModal: React.FC<GameResultModalProps> = ({ closeModal }) => {
             onClick={closeModal}
             className="bg-green-400 rounded-lg w-2/3 hover:bg-green-500 hover:-translate-y-1 transition duration-150 ease-in-out"
           >
-          <p className="text-2xl font-bold py-4 text-black dark:text-white">PLAY AGAIN</p>
+          <p className="text-2xl font-bold py-4 text-white">PLAY AGAIN</p>
         </button>
       </div>
     </div>

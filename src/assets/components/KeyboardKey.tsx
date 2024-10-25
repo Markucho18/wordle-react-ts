@@ -1,8 +1,8 @@
 import { useEffect } from "react"
-import { KeyboardKeyState } from "../../types"
+import { LetterState } from "../../types"
 
 interface KeyboarKeyProps {
-  state: KeyboardKeyState
+  state: LetterState
   letter: string
   onInput: (letter: string) => void
 }
@@ -10,7 +10,8 @@ interface KeyboarKeyProps {
 const KeyboardKey: React.FC<KeyboarKeyProps> = ({state, letter, onInput}) => {
 
   const colors = {
-    absent: "bg-[#a4aec4] dark:bg-[#191a24]",
+    unknown: "bg-[#a4aec4] dark:bg-[#21222e]",
+    absent: "bg-[#878e9c] dark:bg-[#000]",
     present: "bg-[#f3c237]",
     correct: "bg-[#79b851]"
   }

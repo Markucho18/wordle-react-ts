@@ -1,6 +1,6 @@
 toDoList:
-[]Colorear distinto la key si no se uso a si esta ausente
-[]Animacion escribir
+[✓]Colorear distinto la key si no se uso a si esta ausente
+[✓]Animacion escribir
 []Animacion descubrir palabra
 []Cambiar longitud palabra y reiniciar
 []Estilizar Header

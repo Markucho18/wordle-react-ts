@@ -11,3 +11,21 @@ body{
   width: 100vw;
   font-family: "Open Sans", sans-serif;
 }
+
+.absent, .unknown{
+  @apply bg-[#a4aec4] dark:bg-[#191a24]
+}
+.present{
+  @apply bg-[#f3c237]
+}
+.correct{
+  @apply bg-[#79b851]
+}
+
+.write-animation{
+  @apply transition-all duration-150 ease-in-out -translate-y-1
+}
+
+.reveal-animation{
+  transform: rotateX(180deg);
+}

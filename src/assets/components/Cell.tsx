@@ -1,4 +1,4 @@
-//import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { checkLetter } from "../utils/checkLetter"
 
 interface CellProps{
@@ -9,24 +9,73 @@ interface CellProps{
   check?: boolean
 }
 
-const Cell:React.FC<CellProps> = ({word, letter, index, size = 16, check = true}) => {
+const Cell:React.FC<CellProps> = ({word, letter, index, size = 16, check = true}) =>{
+  
+  const [letterState, setLetterState] = useState(check ? checkLetter(word, letter, index) : "unknown")
 
-  const letterState = check ? checkLetter(word, letter, index) : 0
+  const [revealAnimation, setRevealAnimation] = useState(false)
 
-  const colors = [
-    "bg-[#a4aec4] dark:bg-[#191a24]",
-    "bg-[#f3c237]",
-    "bg-[#79b851]"
-  ]
-  const colorStyles = colors[letterState]
+  useEffect(()=>{
+    if(letterState !== "unknown"){
+      setRevealAnimation(true)
+      /* const timeOut = setTimeout(()=>{
+        setRevealAnimation(false)
+        clearTimeout(timeOut)
+      }, 300) */
+    }
+    console.log("Se actualizo el estado de la letra en Cell: ", letterState)
+  },[letterState])
+
+  const [writeAnimation, setWriteAnimation] = useState(false)
+
+  useEffect(()=>{
+   if(letter !== ""){
+    setWriteAnimation(true)
+    const timeOut = setTimeout(()=>{
+      setWriteAnimation(false)
+      clearTimeout(timeOut)
+    }, 150)
+   }
+  },[letter])
 
   return (
-    <li
-      className={`flex justify-center items-center text-3xl font-bold rounded-lg size-${size} ${colorStyles}`}
-    >
-      {letter.toUpperCase()}
+    <li className="relative">
+      <ul
+        style={{perspective: "1000px"}}
+        className={`
+          flex justify-center items-center text-3xl font-bold rounded-lg cell-container
+          size-${size} ${writeAnimation && "write-animation"}
+        `}
+      >
+        <div
+          style={{transformStyle: "preserve-3d"}}
+          className={`relative size-full transition-all duration-300 ${revealAnimation && "reveal-animation"}`}
+        >
+          <div
+            className={`absolute size-full flex justify-center items-center unknown`}
+            //className="absolute size-full flex justify-center items-center"
+            >
+            {letter}
+          </div>
+          <div
+            style={{transform: "rotateX(0deg)"}}
+            className={`absolute size-full flex justify-center items-center ${letterState}`}
+          >
+            {letter}
+          </div>
+        </div>
+      </ul>
     </li>
   )
 }
 
+{/* <li
+  className={`
+    flex justify-center items-center text-3xl font-bold rounded-lg 
+    size-${size} ${colorStyles} ${animation && "write-animation"}
+
+  `}
+>
+  {letter.toUpperCase()}
+</li> */}
 export default Cell

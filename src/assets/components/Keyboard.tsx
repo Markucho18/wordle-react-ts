@@ -1,10 +1,10 @@
 import KeyboardKey from "./KeyboardKey";
 import { FiDelete } from "react-icons/fi";
 import { alphabet } from "../utils/alphabet";
-import { KeyboardKeyState } from "../../types";
+import { LetterState } from "../../types";
 
 interface KeyboardProps{
-  checkedKeys: KeyboardKeyState[]
+  checkedKeys: LetterState[]
   onInput: (letter: string) => void
   onDelete: () => void
   onEnter: () => Promise<void>

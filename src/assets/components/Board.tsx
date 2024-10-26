@@ -1,7 +1,6 @@
 import Row from "./Row"
 import CurrentRow from "./CurrentRow"
 import EmptyRow from "./EmptyRow"
-import { useEffect } from "react"
 
 interface BoardProps{
   word: string
@@ -12,12 +11,6 @@ interface BoardProps{
 
 const Board: React.FC<BoardProps> = ({ word, turn, currentWord, completedWords}) => {
 
-  //const {previousWords, currentWord, word} = useWordsContext()
-
-  useEffect(()=>{
-    console.log("Valores en Board.tsx: ", {word, turn, currentWord, completedWords})
-  }, [completedWords])
-  
   return (
     <div className="flex flex-col gap-2 text-white gap">
       {completedWords.map((completedWord, i)=>(

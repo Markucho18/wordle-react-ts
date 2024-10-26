@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { LetterState } from "../../types"
 
 interface KeyboarKeyProps {
@@ -16,10 +15,6 @@ const KeyboardKey: React.FC<KeyboarKeyProps> = ({state, letter, onInput}) => {
     correct: "bg-[#79b851]"
   }
   const colorsStyle = colors[state]
-
-  useEffect(()=>{
-
-  })
 
   return (
     <button

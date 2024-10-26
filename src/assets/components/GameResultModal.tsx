@@ -1,5 +1,5 @@
 import { GameStatus } from "../../types"
-import Cell from "./Cell"
+import { checkKey } from "../utils/checkKey"
 
 interface GameResultModalProps{
   gameStatus: GameStatus
@@ -10,19 +10,9 @@ interface GameResultModalProps{
 
 const GameResultModal: React.FC<GameResultModalProps> = ({ gameStatus, word, completedWords, closeModal}) => {
 
-/*   const {gameStatus, word, previousWords} = useWordsContext() */
-
   return (
     <div className="absolute inset-0 size-full flex justify-center items-center bg-black/20">
       <div className="flex flex-col py-16 px-10 gap-8 bg-white dark:bg-zinc-600 rounded-lg items-center">
-        {/* <button
-          className="absolute right-2 top-2 text-black hover:text-zinc-500 dark:text-zinc-200 dark:hover:text-white"
-          onClick={closeModal}
-        >
-          <IoCloseSharp 
-            className="size-8"
-          />
-        </button> */}
         <h2 className={`text-3xl font-bold ${gameStatus == "won" ? "text-green-400" : "text-red-500"}`}>
           {gameStatus == "won"
             ? "Congratulations! you've won"
@@ -32,22 +22,24 @@ const GameResultModal: React.FC<GameResultModalProps> = ({ gameStatus, word, com
         <div className="flex flex-col gap-2 text-white">
           {completedWords.map((prevRow, i)=>{
             return (
-              <div
+              <ul
                 key={i}
                 className="flex gap-2"
               >
                 {prevRow.split("").map((prevLetter, j)=>{
                   return (
-                    <Cell
-                    key={j}
-                    word={word} 
-                    index={j}
-                    letter={prevLetter}
-                    size={8}
-                  />
+                    <li
+                      key={j}
+                      className={`
+                        flex justify-center items-center text-3xl font-bold rounded-lg cell-container size-8 
+                        ${checkKey(completedWords, prevLetter, word)}
+                        `}
+                    >
+                      {prevLetter}
+                    </li>
                   )
                 })}
-            </div>
+              </ul>
             )
           })}
         </div>

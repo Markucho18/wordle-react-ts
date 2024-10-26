@@ -5,25 +5,26 @@ interface CellProps{
   word: string
   letter: string
   index: number
-  size?: number
   check?: boolean
 }
 
-const Cell:React.FC<CellProps> = ({word, letter, index, size = 16, check = true}) =>{
+const Cell:React.FC<CellProps> = ({word, letter, index, check = true}) =>{
   
-  const [letterState, setLetterState] = useState(check ? checkLetter(word, letter, index) : "unknown")
+  const [letterState] = useState(check ? checkLetter(word, letter, index) : "unknown")
 
   const [revealAnimation, setRevealAnimation] = useState(false)
+  const animationDuration = 200
 
   useEffect(()=>{
     if(letterState !== "unknown"){
-      setRevealAnimation(true)
-      /* const timeOut = setTimeout(()=>{
+      const revealDelay = setTimeout(()=>{
+        setRevealAnimation(true)
+      }, index * animationDuration)
+      return(()=>{
         setRevealAnimation(false)
-        clearTimeout(timeOut)
-      }, 300) */
+        clearTimeout(revealDelay)
+      })
     }
-    console.log("Se actualizo el estado de la letra en Cell: ", letterState)
   },[letterState])
 
   const [writeAnimation, setWriteAnimation] = useState(false)
@@ -42,23 +43,20 @@ const Cell:React.FC<CellProps> = ({word, letter, index, size = 16, check = true}
     <li className="relative">
       <ul
         style={{perspective: "1000px"}}
-        className={`
-          flex justify-center items-center text-3xl font-bold rounded-lg cell-container
-          size-${size} ${writeAnimation && "write-animation"}
-        `}
+        className={`flex justify-center items-center text-3xl font-bold rounded-lg size-16 ${writeAnimation && "write-animation"}`}
       >
         <div
           style={{transformStyle: "preserve-3d"}}
-          className={`relative size-full transition-all duration-300 ${revealAnimation && "reveal-animation"}`}
+          className={`relative size-full transition-all duration-${animationDuration} ${revealAnimation && "reveal-animation"}`}
         >
           <div
-            className={`absolute size-full flex justify-center items-center unknown`}
-            //className="absolute size-full flex justify-center items-center"
+            style={{backfaceVisibility: "hidden"}}
+            className="absolute size-full flex justify-center items-center unknown"
             >
             {letter}
           </div>
           <div
-            style={{transform: "rotateX(0deg)"}}
+            style={{backfaceVisibility: "hidden", transform: "rotateX(180deg)"}}
             className={`absolute size-full flex justify-center items-center ${letterState}`}
           >
             {letter}
@@ -69,13 +67,4 @@ const Cell:React.FC<CellProps> = ({word, letter, index, size = 16, check = true}
   )
 }
 
-{/* <li
-  className={`
-    flex justify-center items-center text-3xl font-bold rounded-lg 
-    size-${size} ${colorStyles} ${animation && "write-animation"}
-
-  `}
->
-  {letter.toUpperCase()}
-</li> */}
 export default Cell

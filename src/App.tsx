@@ -16,6 +16,13 @@ const App: React.FC = () =>{
   const [gameStatus, setGameStatus] = useState<GameStatus>("playing")
   
   const [wordLength, setWordLength] = useState(5)
+  const handleWordLength = (newWordLength: number) => {
+    const answer = confirm("Are you sure to change the word length, it'll restart the game")
+    if(answer){
+      setWordLength(newWordLength)
+      restartGame(newWordLength)
+    }
+  }
 
   const [word, setWord] = useState(getWord(wordLength))
 
@@ -36,7 +43,6 @@ const App: React.FC = () =>{
   }
 
   const [warningModal, setWarningModal] = useState(0)
-/*   const handleWarningModal = (n: number) => setWarningModal(n) */
 
   const handleEnter = async () => {
     if(currentWord.length == wordLength){
@@ -45,8 +51,6 @@ const App: React.FC = () =>{
         const newCompletedWords = [...completedWords, currentWord]
         setCompletedWords(newCompletedWords)
         setTurn(prev => prev + 1)
-        //console.log("currentWord en handleEnter: ", currentWord)
-        console.log("newCompletedWords en handleEnter: ", newCompletedWords)
         if(currentWord.toLowerCase() == word){
           setGameStatus("won")
         }
@@ -83,16 +87,15 @@ const App: React.FC = () =>{
 
   useWindow("keydown", handleKeyDown)
 
-  const restartGame = () => {
+  const restartGame = (newLength?: number) => {
     setCurrentWord("")
     setCompletedWords([])
     setTurn(1)
-    setWord(getWord(wordLength))
+    setWord(getWord(newLength ? newLength : wordLength))
     setGameStatus("playing")
   }
 
   useEffect(()=>{
-    console.log("El gamestatus cambió ", gameStatus)
     if(gameStatus == "won" || gameStatus == "lost"){
       setGameResultModal(true)
     }
@@ -110,8 +113,8 @@ const App: React.FC = () =>{
   },[warningModal])
 
   useEffect(()=>{
-    console.log(word)
-  },[])
+    console.log("word: ", word)
+  },[word])
 
   const toggleTheme = () => {
     let htmlElement = document.documentElement
@@ -125,15 +128,13 @@ const App: React.FC = () =>{
       return checkKey(completedWords, letter, word)
     })
     setCheckedKeys(newCheckedKeys)
-    console.log("En app completedWords cambiò y checkedKeys son: ", newCheckedKeys)
   },[completedWords])
 
-
   return (
-    <div className="relative w-full h-screen flex flex-col items-center gap-12 dark:bg-zinc-600 select-none">
+    <div className="relative w-full h-screen flex flex-col items-center gap-12 bg-zinc-200 dark:bg-zinc-600 select-none">
       <Header
         wordLength={wordLength}
-        handleWordLength={setWordLength}
+        handleWordLength={handleWordLength}
         toggleTheme={toggleTheme}
       />
       <Board
